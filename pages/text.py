@@ -10,17 +10,16 @@ import yaml
 def chat_ui():
    # 打开并读取 YAML 文件
     with open('../configs/config.yaml', 'r', encoding='UTF-8') as file:
-        config = yaml.safe_load(file)
         # Get the max token length for the chatbot
-        max_tokens = config.get('max_tokens', 2048)
+        max_tokens = config.get(['conversation_setting']['max_tokens'], 2048)
         # Get the temperature for the chatbot
-        temperature = config.get('temperature', 0.0)
+        temperature = config.get(['conversation_setting']['temperature'], 0.0)
         # Get the api key for the OpenAI API
-        api_key = config.get('api_key', "internlm2")
+        api_key = config.get(['conversation_setting']['api_key'], "internlm2")
         # Get the base url for the OpenAI API
-        base_url = config.get('base_url', "http://0.0.0.0:23333/v1")
+        base_url = config.get(['conversation_setting']['base_url'], "http://0.0.0.0:23333/v1")
         # Get the system prompt for the chatbot
-        system_prompt = config.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
+        system_prompt = config.get(['conversation_setting']['system_prompt'], "我是乐豆小助手，逗乐不停，欢乐满荧！")
 
     message_history = []
     if system_prompt != "":
@@ -45,7 +44,6 @@ def chat_ui():
     if user_input:
         message_history.append({"role": "user", "content": user_input})
         # Generate a response from the chatbot
-        print(max_tokens)
         response = llm.chat.completions.create(
             model=llm.models.list().data[0].id,
             messages=message_history,
