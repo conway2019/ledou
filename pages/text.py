@@ -12,7 +12,7 @@ def chat_ui():
     with open('../configs/config.yaml', 'r', encoding='UTF-8') as file:
         config = yaml.safe_load(file)
         # Get the max token length for the chatbot
-        max_tokens = config.get('max_tokens', 100)
+        max_tokens = config.get('max_tokens', 2048)
         # Get the temperature for the chatbot
         temperature = config.get('temperature', 0.0)
         # Get the api key for the OpenAI API
@@ -21,25 +21,31 @@ def chat_ui():
         base_url = config.get('base_url', "http://0.0.0.0:23333/v1")
         # Get the system prompt for the chatbot
         system_prompt = config.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
+
+    message_history = []
+    if system_prompt != "":
+        message_history.append({"role": "system", "content": system_prompt})
     
-        print(base_url)
-        llm = OpenAI(api_key=api_key, base_url=base_url)
-        print(llm)
-        print(llm.models.list().data[0].id)
-            
-    #隐藏streamlit菜单
-    st.set_page_config(menu_items=None)
-    
-    state = st.session_state
+    llm = OpenAI(api_key=api_key, base_url=base_url)
+        
+    if st.sidebar.button("开启新对话"):
+        if not os.path.exists("chat_history"):
+            os.mkdir("chat_history")
+            pass
+        with open(f"chat_history/{time.time()}.json", "w") as f:
+            json.dump(message_history, f, ensure_ascii=False)
+            pass
+        message_history = []
+                    
     # Set the title of the app
     st.title("乐豆：逗乐不停，欢乐满荧")
     st.caption("你喜欢什么样的笑话？冷笑话、幽默笑话、职场笑话、儿童笑话？说出你的想法吧！")
 
-    message_history = []
     user_input = st.chat_input("输入消息")
     if user_input:
         message_history.append({"role": "user", "content": user_input})
         # Generate a response from the chatbot
+        print(max_tokens)
         response = llm.chat.completions.create(
             model=llm.models.list().data[0].id,
             messages=message_history,
