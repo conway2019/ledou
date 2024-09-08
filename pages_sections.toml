@@ -1,0 +1,17 @@
+[[pages]]
+path = "./pages/text.py"
+name = "文本问答"
+icon = "📄"
+
+
+[[pages]]
+path = "./pages/voice.py"
+name = "语音合成"
+icon = "🎤"
+
+[[pages]]
+path = "./pages/human.py"
+name = "数字人"
+icon = ":💁‍♀️:"
+
+
