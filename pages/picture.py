@@ -65,7 +65,7 @@ class StreamlitUI:
     def setup_sidebar(self):
         """Setup the sidebar for model and plugin selection."""
         # model_name = st.sidebar.selectbox('模型选择：', options=['internlm'])
-        model_name = st.sidebar.text_input('模型名称：', value='internlm2-chat-7b')
+        model_name = st.sidebar.text_input('模型名称：', value='internlm2_5-7b-chat')
         meta_prompt = st.sidebar.text_area('系统提示词', value=META_CN)
         da_prompt = st.sidebar.text_area('数据分析提示词', value=INTERPRETER_CN)
         plugin_prompt = st.sidebar.text_area('插件提示词', value=PLUGIN_CN)
