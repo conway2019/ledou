@@ -6,6 +6,7 @@ import os
 import streamlit as st
 
 from lagent.actions import ActionExecutor, ArxivSearch, IPythonInterpreter
+from lagent.actions.magicmaker import MagicMaker
 from lagent.agents.internlm2_agent import INTERPRETER_CN, META_CN, PLUGIN_CN, Internlm2Agent, Internlm2Protocol
 from lagent.llms.lmdeploy_wrapper import LMDeployClient
 from lagent.llms.meta_template import INTERNLM2_META as META
@@ -23,6 +24,7 @@ class SessionState:
 
         action_list = [
             ArxivSearch(),
+            MagicMaker(),
         ]
         st.session_state['plugin_map'] = {
             action.name: action
