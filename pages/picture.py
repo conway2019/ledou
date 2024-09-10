@@ -40,7 +40,6 @@ class SessionState:
         st.session_state['assistant'] = []
         st.session_state['user'] = []
         st.session_state['model_selected'] = None
-        st.session_state['file'] = set()
         if 'chatbot' in st.session_state:
             st.session_state['chatbot']._session_history = []
 
@@ -59,7 +58,6 @@ class StreamlitUI:
             page_icon='../logo.png')
         st.header(':robot_face: :blue[乐豆] 笑话助手 ', divider='rainbow')
         st.sidebar.title('模型控制')
-        st.session_state['file'] = set()
         st.session_state['ip'] = None
 
     def setup_sidebar(self):
@@ -67,7 +65,6 @@ class StreamlitUI:
         # model_name = st.sidebar.selectbox('模型选择：', options=['internlm'])
         model_name = st.sidebar.text_input('模型名称：', value='internlm2_5-7b-chat')
         meta_prompt = st.sidebar.text_area('系统提示词', value=META_CN)
-        da_prompt = st.sidebar.text_area('数据分析提示词', value=INTERPRETER_CN)
         plugin_prompt = st.sidebar.text_area('插件提示词', value=PLUGIN_CN)
         model_ip = st.sidebar.text_input('模型IP：', value='127.0.0.1:23333')
         if model_name != st.session_state[
@@ -86,10 +83,6 @@ class StreamlitUI:
             options=list(st.session_state['plugin_map'].keys()),
             default=[],
         )
-        da_flag = st.sidebar.checkbox(
-            '数据分析',
-            value=False,
-        )
         plugin_action = [
             st.session_state['plugin_map'][name] for name in plugin_name
         ]
@@ -100,21 +93,14 @@ class StreamlitUI:
                     actions=plugin_action)
             else:
                 st.session_state['chatbot']._action_executor = None
-            if da_flag:
-                st.session_state[
-                    'chatbot']._interpreter_executor = ActionExecutor(
-                        actions=[IPythonInterpreter()])
-            else:
-                st.session_state['chatbot']._interpreter_executor = None
+
+            st.session_state['chatbot']._interpreter_executor = None
             st.session_state['chatbot']._protocol._meta_template = meta_prompt
             st.session_state['chatbot']._protocol.plugin_prompt = plugin_prompt
-            st.session_state[
-                'chatbot']._protocol.interpreter_prompt = da_prompt
         if st.sidebar.button('清空对话', key='clear'):
             self.session_state.clear_state()
-        uploaded_file = st.sidebar.file_uploader('上传文件')
 
-        return model_name, model, plugin_action, uploaded_file, model_ip
+        return model_name, model, plugin_action, model_ip
 
     def init_model(self, model_name, ip=None):
         """Initialize the model based on the input model name."""
@@ -230,7 +216,7 @@ def main():
             page_title='乐豆：逗乐不停，欢乐满荧',
             page_icon='../logo.png')
         st.header(':robot_face: :blue[乐豆] 笑话助手 ', divider='rainbow')
-    _, model, plugin_action, uploaded_file, _ = st.session_state[
+    _, model, plugin_action,  _ = st.session_state[
         'ui'].setup_sidebar()
 
     # Initialize chatbot if it is not already initialized
@@ -250,38 +236,7 @@ def main():
         with st.container():
             st.session_state['ui'].render_user(user_input)
         st.session_state['user'].append(user_input)
-        # Add file uploader to sidebar
-        if (uploaded_file
-                and uploaded_file.name not in st.session_state['file']):
-
-            st.session_state['file'].add(uploaded_file.name)
-            file_bytes = uploaded_file.read()
-            file_type = uploaded_file.type
-            if 'image' in file_type:
-                st.image(file_bytes, caption='Uploaded Image')
-            elif 'video' in file_type:
-                st.video(file_bytes, caption='Uploaded Video')
-            elif 'audio' in file_type:
-                st.audio(file_bytes, caption='Uploaded Audio')
-            # Save the file to a temporary location and get the path
-
-            postfix = uploaded_file.name.split('.')[-1]
-            # prefix = str(uuid.uuid4())
-            prefix = hashlib.md5(file_bytes).hexdigest()
-            filename = f'{prefix}.{postfix}'
-            file_path = os.path.join(root_dir, filename)
-            with open(file_path, 'wb') as tmpfile:
-                tmpfile.write(file_bytes)
-            file_size = os.stat(file_path).st_size / 1024 / 1024
-            file_size = f'{round(file_size, 2)} MB'
-            # st.write(f'File saved at: {file_path}')
-            user_input = [
-                dict(role='user', content=user_input),
-                dict(
-                    role='user',
-                    content=json.dumps(dict(path=file_path, size=file_size)),
-                    name='file')
-            ]
+    
         if isinstance(user_input, str):
             user_input = [dict(role='user', content=user_input)]
         st.session_state['last_status'] = AgentStatusCode.SESSION_READY
@@ -329,7 +284,4 @@ def main():
 
 
 if __name__ == '__main__':
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    root_dir = os.path.join(root_dir, 'tmp_dir')
-    os.makedirs(root_dir, exist_ok=True)
     main()
