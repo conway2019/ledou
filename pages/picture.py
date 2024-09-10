@@ -2,6 +2,7 @@ import copy
 import hashlib
 import json
 import os
+import yaml
 
 import streamlit as st
 
@@ -34,6 +35,17 @@ class SessionState:
         st.session_state['model_selected'] = None
         st.session_state['plugin_actions'] = set()
         st.session_state['history'] = []
+        
+           # 打开并读取 YAML 文件
+    with open('../configs/config.yaml', 'r', encoding='UTF-8') as file:
+        config = yaml.safe_load(file)
+        conversation_setting = config['conversation_setting']
+        
+        # Get the base url for the OpenAI API
+        base_url = conversation_setting.get('base_url', "http://0.0.0.0:23333/v1")
+        # Get the system prompt for the chatbot
+        system_prompt = conversation_setting.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
+        st.session_state["system_prompt"] = system_prompt
 
     def clear_state(self):
         """Clear the existing session state."""
@@ -64,10 +76,7 @@ class StreamlitUI:
 
     def setup_sidebar(self):
         """Setup the sidebar for model and plugin selection."""
-        # model_name = st.sidebar.selectbox('模型选择：', options=['internlm'])
         model_name = st.sidebar.text_input('模型名称：', value='internlm2_5-7b-chat')
-        meta_prompt = st.sidebar.text_area('系统提示词', value=META_CN)
-        da_prompt = st.sidebar.text_area('数据分析提示词', value=INTERPRETER_CN)
         plugin_prompt = st.sidebar.text_area('插件提示词', value=PLUGIN_CN)
         model_ip = st.sidebar.text_input('模型IP：', value='127.0.0.1:23333')
         if model_name != st.session_state[
@@ -86,10 +95,6 @@ class StreamlitUI:
             options=list(st.session_state['plugin_map'].keys()),
             default=[],
         )
-        da_flag = st.sidebar.checkbox(
-            '数据分析',
-            value=False,
-        )
         plugin_action = [
             st.session_state['plugin_map'][name] for name in plugin_name
         ]
@@ -100,16 +105,8 @@ class StreamlitUI:
                     actions=plugin_action)
             else:
                 st.session_state['chatbot']._action_executor = None
-            if da_flag:
-                st.session_state[
-                    'chatbot']._interpreter_executor = ActionExecutor(
-                        actions=[IPythonInterpreter()])
-            else:
-                st.session_state['chatbot']._interpreter_executor = None
-            st.session_state['chatbot']._protocol._meta_template = meta_prompt
+            st.session_state['chatbot']._protocol._meta_template = st.session_state['system_prompt']
             st.session_state['chatbot']._protocol.plugin_prompt = plugin_prompt
-            st.session_state[
-                'chatbot']._protocol.interpreter_prompt = da_prompt
         if st.sidebar.button('清空对话', key='clear'):
             self.session_state.clear_state()
         uploaded_file = st.sidebar.file_uploader('上传文件')
