@@ -110,9 +110,8 @@ class StreamlitUI:
             st.session_state['chatbot']._protocol.plugin_prompt = plugin_prompt
         if st.sidebar.button('清空对话', key='clear'):
             self.session_state.clear_state()
-        uploaded_file = st.sidebar.file_uploader('上传文件')
 
-        return model_name, model, plugin_action, uploaded_file, model_ip
+        return model_name, model, plugin_action, model_ip
 
     def init_model(self, model_name, ip=None):
         """Initialize the model based on the input model name."""
@@ -228,7 +227,7 @@ def main():
             page_title='乐豆：逗乐不停，欢乐满荧',
             page_icon='../logo.png')
         st.header(':robot_face: :blue[乐豆] 笑话助手 ', divider='rainbow')
-    _, model, plugin_action, uploaded_file, _ = st.session_state[
+    _, model, plugin_action, _ = st.session_state[
         'ui'].setup_sidebar()
 
     # Initialize chatbot if it is not already initialized
@@ -248,38 +247,6 @@ def main():
         with st.container():
             st.session_state['ui'].render_user(user_input)
         st.session_state['user'].append(user_input)
-        # Add file uploader to sidebar
-        if (uploaded_file
-                and uploaded_file.name not in st.session_state['file']):
-
-            st.session_state['file'].add(uploaded_file.name)
-            file_bytes = uploaded_file.read()
-            file_type = uploaded_file.type
-            if 'image' in file_type:
-                st.image(file_bytes, caption='Uploaded Image')
-            elif 'video' in file_type:
-                st.video(file_bytes, caption='Uploaded Video')
-            elif 'audio' in file_type:
-                st.audio(file_bytes, caption='Uploaded Audio')
-            # Save the file to a temporary location and get the path
-
-            postfix = uploaded_file.name.split('.')[-1]
-            # prefix = str(uuid.uuid4())
-            prefix = hashlib.md5(file_bytes).hexdigest()
-            filename = f'{prefix}.{postfix}'
-            file_path = os.path.join(root_dir, filename)
-            with open(file_path, 'wb') as tmpfile:
-                tmpfile.write(file_bytes)
-            file_size = os.stat(file_path).st_size / 1024 / 1024
-            file_size = f'{round(file_size, 2)} MB'
-            # st.write(f'File saved at: {file_path}')
-            user_input = [
-                dict(role='user', content=user_input),
-                dict(
-                    role='user',
-                    content=json.dumps(dict(path=file_path, size=file_size)),
-                    name='file')
-            ]
         if isinstance(user_input, str):
             user_input = [dict(role='user', content=user_input)]
         st.session_state['last_status'] = AgentStatusCode.SESSION_READY
