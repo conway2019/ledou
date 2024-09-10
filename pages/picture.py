@@ -36,16 +36,16 @@ class SessionState:
         st.session_state['plugin_actions'] = set()
         st.session_state['history'] = []
         
-           # 打开并读取 YAML 文件
-    with open('../configs/config.yaml', 'r', encoding='UTF-8') as file:
-        config = yaml.safe_load(file)
-        conversation_setting = config['conversation_setting']
-        
-        # Get the base url for the OpenAI API
-        base_url = conversation_setting.get('base_url', "http://0.0.0.0:23333/v1")
-        # Get the system prompt for the chatbot
-        system_prompt = conversation_setting.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
-        st.session_state["system_prompt"] = system_prompt
+        # 打开并读取 YAML 文件
+        with open('../configs/config.yaml', 'r', encoding='UTF-8') as file:
+            config = yaml.safe_load(file)
+            conversation_setting = config['conversation_setting']
+            
+            # Get the base url for the OpenAI API
+            base_url = conversation_setting.get('base_url', "http://0.0.0.0:23333/v1")
+            # Get the system prompt for the chatbot
+            system_prompt = conversation_setting.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
+            st.session_state["system_prompt"] = system_prompt
 
     def clear_state(self):
         """Clear the existing session state."""
@@ -77,7 +77,8 @@ class StreamlitUI:
     def setup_sidebar(self):
         """Setup the sidebar for model and plugin selection."""
         model_name = st.sidebar.text_input('模型名称：', value='internlm2_5-7b-chat')
-        plugin_prompt = st.sidebar.text_area('插件提示词', value=PLUGIN_CN)
+        meta_prompt = META_CN
+        plugin_prompt = PLUGIN_CN
         model_ip = st.sidebar.text_input('模型IP：', value='127.0.0.1:23333')
         if model_name != st.session_state[
                 'model_selected'] or st.session_state['ip'] != model_ip:
@@ -105,7 +106,7 @@ class StreamlitUI:
                     actions=plugin_action)
             else:
                 st.session_state['chatbot']._action_executor = None
-            st.session_state['chatbot']._protocol._meta_template = st.session_state['system_prompt']
+            st.session_state['chatbot']._protocol._meta_template = meta_prompt
             st.session_state['chatbot']._protocol.plugin_prompt = plugin_prompt
         if st.sidebar.button('清空对话', key='clear'):
             self.session_state.clear_state()
