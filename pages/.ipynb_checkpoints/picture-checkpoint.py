@@ -23,17 +23,9 @@ class SessionState:
         st.session_state['assistant'] = []
         st.session_state['user'] = []
 
-        action_list = [
-            ArxivSearch(),
-            MagicMaker(),
-        ]
-        st.session_state['plugin_map'] = {
-            action.name: action
-            for action in action_list
-        }
         st.session_state['model_map'] = {}
         st.session_state['model_selected'] = None
-        st.session_state['plugin_actions'] = set()
+        #st.session_state['plugin_actions'] = set()
         st.session_state['history'] = []
         
         # 打开并读取 YAML 文件
@@ -94,15 +86,7 @@ class StreamlitUI:
         else:
             model = st.session_state['model_map'][model_name]
 
-        plugin_name = st.sidebar.multiselect(
-            '插件选择',
-            options=list(st.session_state['plugin_map'].keys()),
-            default=[],
-        )
-        plugin_action = [
-            st.session_state['plugin_map'][name] for name in plugin_name
-        ]
-
+        plugin_action = [MagicMaker()]
         if 'chatbot' in st.session_state:
             if len(plugin_action) > 0:
                 st.session_state['chatbot']._action_executor = ActionExecutor(
