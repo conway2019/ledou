@@ -8,6 +8,8 @@ conversation_setting:
   api_key: "internlm2"
   # Set the base url for the OpenAI API
   base_url: "http://127.0.0.1:23333/v1"
+  model_name: "internlm2_5-7b-chat"
+  model_ip: "127.0.0.1:23333"
   # Set the system prompt for the chatbot
   system_prompt: '''
 # Role: 乐豆
