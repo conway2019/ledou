@@ -25,7 +25,6 @@ class SessionState:
 
         st.session_state['model_map'] = {}
         st.session_state['model_selected'] = None
-        #st.session_state['plugin_actions'] = set()
         st.session_state['history'] = []
         
         # 打开并读取 YAML 文件
@@ -47,7 +46,6 @@ class SessionState:
         st.session_state['assistant'] = []
         st.session_state['user'] = []
         st.session_state['model_selected'] = None
-        #st.session_state['file'] = set()
         if 'chatbot' in st.session_state:
             st.session_state['chatbot']._session_history = []
 
