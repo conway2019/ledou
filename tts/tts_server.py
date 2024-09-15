@@ -68,7 +68,7 @@ def tts(item: TTSItem):
     if len(output) == 1:
         torchaudio.save(path, j['tts_speech'], 22050)
     else:
-        for i, j in enumerate(output:
+        for i, j in enumerate(output):
             torchaudio.save(path.format(i), j['tts_speech'], 22050)
         #合并音频片段
         combined_audio(path, i)
