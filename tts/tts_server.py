@@ -66,13 +66,12 @@ def tts(item: TTSItem):
     num = str(count_files_in_folder()+1)
     path = audio_folder_path + num +".wav"
     output = cosyvoice.inference_sft(item.text, '中文女', stream=False)
-    if len(list(output)) == 1:
-        print("个数为1")
-        torchaudio.save(path, output['tts_speech'], 22050)
-    else:
-        print("个数为",len(list(output)) )
-        for i, j in enumerate(output):
+    for i, j in enumerate(output):
+        if len(list(output)) == 1:
+            torchaudio.save(path, j['tts_speech'], 22050)
+        else:
             torchaudio.save(path.format(i), j['tts_speech'], 22050)
+    if len(list(output)) > 1:
         #合并音频片段
         combined_audio(path, len(list(output)))
     torch_gc()
