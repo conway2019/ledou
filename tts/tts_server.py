@@ -71,7 +71,7 @@ def tts(item: TTSItem):
         for i, j in enumerate(output):
             torchaudio.save(path.format(i), j['tts_speech'], 22050)
         #合并音频片段
-        combined_audio(path, i)
+        combined_audio(path, len(list(output)))
     torch_gc()
    
     result_dict = {"code": 0, "msg": "ok", "res": path}
