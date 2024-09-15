@@ -18,7 +18,7 @@ def rag_response(text:str):
         return response['msg']
 
 
-def llm_response():
+def llm_response(prompt):
    # 打开并读取 YAML 文件
     with open('../configs/config.yaml', 'r', encoding='UTF-8') as file:
         config = yaml.safe_load(file)
@@ -35,18 +35,16 @@ def llm_response():
         # Get the system prompt for the chatbot
         system_prompt = conversation_setting.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
 
-    state = st.session_state
-    if "message_history" not in state:
-        state.message_history = []
-    
-    if system_prompt != "":
-        state.message_history.append({"role": "system", "content": system_prompt})
-    
     llm = OpenAI(api_key=api_key, base_url=base_url)
+    messages=[
+    {"role": "system", "content": system_prompt},
+    {"role": "user", "content": prompt}
+    ]
+
     # Generate a response from the chatbot
     response = llm.chat.completions.create(
             model=llm.models.list().data[0].id,
-            messages=state.message_history,
+            messages=messages,
             max_tokens=max_tokens,
             temperature=temperature
         )
