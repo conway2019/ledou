@@ -51,6 +51,7 @@ def chat_ui():
     if user_input:
         state.message_history.append({"role": "user", "content": user_input})
         # Generate a response from the chatbot
+        print(model_name)
         response = llm.chat.completions.create(
             #model=llm.models.list().data[0].id,
             model=model_name,
