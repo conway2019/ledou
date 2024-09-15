@@ -38,7 +38,7 @@ class SessionState:
             system_prompt = conversation_setting.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
             st.session_state['system_prompt'] = system_prompt
 
-            st.session_state['model_name'] = conversation_setting.get('model_name', 'internlm2_5-7b-chat')
+            st.session_state['model_name'] = conversation_setting.get('model_name', 'internlm/internlm2_5-7b-chat')
             st.session_state['model_ip'] = conversation_setting.get('model_ip', '127.0.0.1:23333')
 
     def clear_state(self):
