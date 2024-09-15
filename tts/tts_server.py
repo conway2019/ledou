@@ -37,6 +37,15 @@ def count_files_in_folder():
         count += len(files)  # 累计文件数量
     return count
 
+from pydub import AudioSegment
+def combined_audio(path, count):
+    for i in range(count):
+        audio = AudioSegment.from_file(path.format(i))
+        if i == 0:
+            combined_audio = audio
+        else:
+            combined_audio = combined_audio + audio 
+    combined_audio.export(path, format="wav")
 
 import random
 from pydantic import BaseModel
@@ -54,8 +63,15 @@ def tts(item: TTSItem):
     
     num = str(count_files_in_folder()+1)
     path = audio_folder_path + num +".wav"
-    for i, j in enumerate(cosyvoice.inference_sft(item.text, '中文女', stream=False)):
+    output = cosyvoice.inference_sft(item.text, '中文女', stream=False))
+    print('音频片段个数', len(output))
+    if len(output) == 1:
         torchaudio.save(path, j['tts_speech'], 22050)
+    else:
+        for i, j in enumerate(output:
+            torchaudio.save(path.format(i), j['tts_speech'], 22050)
+        #合并音频片段
+        combined_audio(path, i)
     torch_gc()
    
     result_dict = {"code": 0, "msg": "ok", "res": path}
