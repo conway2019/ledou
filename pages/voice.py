@@ -81,8 +81,7 @@ def main():
                 with st.chat_message("assistant"):
                     stream = llm_response(prompt)
                     #显示llm返回结果
-                    with st.chat_message("user"):
-                        st.markdown(stream)
+                    st.markdown(stream)
 
                     #调用 tts接口生成音频
                     path=tts_api(stream)
