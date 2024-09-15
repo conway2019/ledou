@@ -43,8 +43,10 @@ def combined_audio(path, count):
         audio = AudioSegment.from_file(path.format(i))
         if i == 0:
             combined_audio = audio
+            print('combined_audio', combined_audio, i)
         else:
-            combined_audio = combined_audio + audio 
+            combined_audio = combined_audio + audio
+            print('combined_audio', combined_audio, i) 
     combined_audio.export(path, format="wav")
 
 import random
