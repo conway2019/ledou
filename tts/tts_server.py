@@ -69,6 +69,7 @@ def tts(item: TTSItem):
     output = cosyvoice.inference_sft(item.text, '中文女', stream=False)
     print('output lenth', len(list(output)) )
     for i, j in enumerate(output):
+        print(i, j)
         if len(list(output)) == 1:
             torchaudio.save(path, j['tts_speech'], 22050)
             print('1个', path)
