@@ -3,21 +3,6 @@ import streamlit as st
 import yaml
 from openai import OpenAI
 
-def rag_response(text:str):
-    headers = {'Content-Type': 'application/json'}
-   
-    data = {"text": text}
-    url= "http://127.0.0.1:7861/"
-    response = requests.post(url+"rag1", headers=headers, json=data)
-    response = response.json()
-    print(response)
-    if response['code'] == 0:
-        res = response['res']
-        return res
-    else:
-        return response['msg']
-
-
 def llm_response(prompt):
    # 打开并读取 YAML 文件
     with open('../configs/config.yaml', 'r', encoding='UTF-8') as file:
@@ -94,8 +79,12 @@ def main():
         if st.session_state.voice[-1]["role"] != "assistant":
             with st.spinner("Thinking..."):
                 with st.chat_message("assistant"):
-                    #stream =rag_response(prompt)
                     stream = llm_response(prompt)
+                    #显示llm返回结果
+                    with st.chat_message("user"):
+                        st.markdown(stream)
+
+                    #调用 tts接口生成音频
                     path=tts_api(stream)
                     audio_file = open(path, 'rb')
                     audio_bytes = audio_file.read()
