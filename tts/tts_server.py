@@ -67,6 +67,7 @@ def tts(item: TTSItem):
     num = str(count_files_in_folder()+1)
     path = audio_folder_path + num +".wav"
     output = cosyvoice.inference_sft(item.text, '中文女', stream=False)
+    print('output lenth', len(list(output)) )
     for i, j in enumerate(output):
         if len(list(output)) == 1:
             torchaudio.save(path, j['tts_speech'], 22050)
