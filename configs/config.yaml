@@ -5,9 +5,11 @@ conversation_setting:
   # Set the temperature for the chatbot
   temperature: 0.0
   # Set the api key for the OpenAI API
-  api_key: "internlm2"
+  #api_key: "internlm2"
+  api_key: "sk-hxrdmnpqclojmuwqynbzveqatmqvkgqmuzgldxebjuiptncb"
   # Set the base url for the OpenAI API
-  base_url: "http://127.0.0.1:23333/v1"
+  #base_url: "http://127.0.0.1:23333/v1"
+  base_url: "https://api.siliconflow.cn/v1"
   model_name: "internlm2_5-7b-chat"
   model_ip: "127.0.0.1:23333"
   # Set the system prompt for the chatbot

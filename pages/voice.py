@@ -17,6 +17,7 @@ def llm_response(prompt):
         api_key = conversation_setting.get('api_key', "internlm2")
         # Get the base url for the OpenAI API
         base_url = conversation_setting.get('base_url', "http://0.0.0.0:23333/v1")
+        model_name = conversation_setting.get('model_name', "internlm2_5-7b-chat")
         # Get the system prompt for the chatbot
         system_prompt = conversation_setting.get('system_prompt', "我是乐豆小助手，逗乐不停，欢乐满荧！")
 
@@ -28,7 +29,7 @@ def llm_response(prompt):
 
     # Generate a response from the chatbot
     response = llm.chat.completions.create(
-            model=llm.models.list().data[0].id,
+            model=model_name,
             messages=messages,
             max_tokens=max_tokens,
             temperature=temperature
