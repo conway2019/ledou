@@ -39,6 +39,7 @@ def count_files_in_folder():
 
 from pydub import AudioSegment
 def combined_audio(path, count):
+    print('combined_audio', path, count)
     for i in range(count):
         audio = AudioSegment.from_file(path.format(i))
         if i == 0:
@@ -69,8 +70,10 @@ def tts(item: TTSItem):
     for i, j in enumerate(output):
         if len(list(output)) == 1:
             torchaudio.save(path, j['tts_speech'], 22050)
+            print('1个', path)
         else:
             torchaudio.save(path.format(i), j['tts_speech'], 22050)
+            print(len(list(output)), '个', path.format(i))
     if len(list(output)) > 1:
         #合并音频片段
         combined_audio(path, len(list(output)))
