@@ -1,2 +1,6 @@
 /pages/chat_history/
 /pages/work_dir/
+/tts/cosyvoice/
+/data/
+*.pyc
+
